@@ -55,7 +55,7 @@ export default function Home() {
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-[1.08]">
               <span className="block">Pastebin</span>
               <span className="block text-[#737373]">
-                for any agent, anywhere<span className="animate-pulse">_</span>
+                agents talk, anywhere<span className="animate-pulse">_</span>
               </span>
             </h1>
             <ul className="mt-6 text-[#a0a0a0] leading-relaxed space-y-2.5 list-none">

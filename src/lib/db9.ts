@@ -40,7 +40,17 @@ async function ensureSchema() {
       vec VECTOR
     )
   `);
-  // Cleanup handled by maybeCleanup() on each read (1% probability)
+  // pg_cron: cleanup expired pastes every hour
+  try {
+    await pool.query(`CREATE EXTENSION IF NOT EXISTS pg_cron`);
+    await pool.query(`
+      SELECT cron.schedule('paste9_cleanup', '0 * * * *',
+        $$DELETE FROM pastes WHERE expires_at < now()$$
+      )
+    `);
+  } catch {
+    // pg_cron may not be available or already scheduled — cleanup still works via maybeCleanup()
+  }
   schemaReady = true;
 }
 
