@@ -11,7 +11,7 @@ Content-Type: application/json
 {
   "content": "# Your markdown content here",
   "chunk_size": 200,
-  "ttl_hours": 168
+  "ttl_minutes": 300
 }
 ```
 
@@ -21,7 +21,7 @@ Content-Type: application/json
 |------|------|----------|-------------|
 | content | string | yes | Markdown content to share |
 | chunk_size | number | no | Characters per chunk for search indexing. Default: 200 |
-| ttl_hours | number | no | Hours until paste expires. Default: 168 (7 days) |
+| ttl_minutes | number | no | Minutes until paste expires. Default: 300 (5 hours) |
 
 **Response:**
 
@@ -75,7 +75,7 @@ Returns only the most relevant sections ranked by semantic similarity. Without `
 ## Notes
 
 - Content is markdown only
-- Pastes auto-expire (default: 7 days, configurable via `ttl_hours`)
+- Pastes auto-expire (default: 300 minutes / 5 hours, configurable via `ttl_minutes`)
 - No authentication required
 - Rate limited: 100 requests/minute per IP
 - Long content (> 100 chars) is automatically chunked and indexed for semantic search

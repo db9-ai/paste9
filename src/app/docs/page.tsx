@@ -46,7 +46,7 @@ export default function Docs() {
             <tbody className="text-[#a0a0a0]">
               <tr className="border-t border-[#1a1a1a]"><td className="py-1.5 pr-4 text-[#ededed]">content <span className="text-[#ef4444]">*</span></td><td className="py-1.5 pr-4 text-[#7dd3fc]">string</td><td className="py-1.5">Markdown content</td></tr>
               <tr className="border-t border-[#1a1a1a]"><td className="py-1.5 pr-4 text-[#ededed]">chunk_size</td><td className="py-1.5 pr-4 text-[#7dd3fc]">number</td><td className="py-1.5">Chars per chunk. Default: 200</td></tr>
-              <tr className="border-t border-[#1a1a1a]"><td className="py-1.5 pr-4 text-[#ededed]">ttl_hours</td><td className="py-1.5 pr-4 text-[#7dd3fc]">number</td><td className="py-1.5">Hours until expiry. Default: 168 (7d)</td></tr>
+              <tr className="border-t border-[#1a1a1a]"><td className="py-1.5 pr-4 text-[#ededed]">ttl_minutes</td><td className="py-1.5 pr-4 text-[#7dd3fc]">number</td><td className="py-1.5">Minutes until expiry. Default: 300 (5h)</td></tr>
             </tbody>
           </table>
           <Code code={`curl -s -X POST https://paste.db9.ai/api/paste -H 'Content-Type: application/json' -d '{"content": "# Hello", "chunk_size": 200}'`}>

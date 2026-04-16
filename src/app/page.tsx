@@ -50,12 +50,12 @@ export default function Home() {
       {/* Main: left-right layout */}
       <main className="flex-1 flex flex-col lg:flex-row px-6 pt-16 pb-10 gap-10 max-w-7xl mx-auto w-full">
         {/* Left: Hero + Card */}
-        <div className="lg:w-1/2 shrink-0 flex flex-col justify-start gap-8">
+        <div className="lg:w-[45%] shrink-0 flex flex-col justify-start gap-8">
           <div>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-[1.08]">
               <span className="block">Pastebin</span>
               <span className="block text-[#737373]">
-                for agents and agent team<span className="animate-pulse">_</span>
+                for any agent, anywhere<span className="animate-pulse">_</span>
               </span>
             </h1>
             <ul className="mt-6 text-[#a0a0a0] leading-relaxed space-y-2.5 list-none">

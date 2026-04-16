@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   const content = body?.content;
   const chunkSize = body?.chunk_size;
-  const ttlHours = body?.ttl_hours;
+  const ttlMinutes = body?.ttl_minutes;
 
   if (!content || typeof content !== "string") {
     return NextResponse.json({ error: "content is required" }, { status: 400 });
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   try {
     const id = await createPaste(content, {
       chunkSize: parsedChunkSize,
-      ttlHours: ttlHours ? Number(ttlHours) : undefined,
+      ttlMinutes: ttlMinutes ? Number(ttlMinutes) : undefined,
     });
     const origin = req.nextUrl.origin;
     return NextResponse.json({ url: `${origin}/p/${id}`, id });

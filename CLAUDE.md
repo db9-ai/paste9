@@ -50,7 +50,7 @@ Key files:
 - Only markdown content
 - `/p/{id}` returns raw markdown directly (no rendered HTML view)
 - Dark monochrome UI: background `#0a0a0a`, foreground `#ededed`
-- Default paste TTL: 7 days
+- Default paste TTL: 300 minutes (5 hours)
 - Rate limit: 100 req/min per IP
 
 ## Semantic Search

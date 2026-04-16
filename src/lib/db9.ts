@@ -5,7 +5,7 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 const DEFAULT_CHUNK_SIZE = 200;
 const SEARCH_THRESHOLD = 100;
 const DEFAULT_SEARCH_LIMIT = 3;
-const DEFAULT_TTL_HOURS = 24 * 7; // 7 days
+const DEFAULT_TTL_MINUTES = 300; // 5 hours
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL?.replace(/[?&]sslmode=[^&]*/g, ""),
@@ -70,7 +70,7 @@ function maybeCleanup() {
 
 export interface CreatePasteOptions {
   chunkSize?: number;
-  ttlHours?: number;
+  ttlMinutes?: number;
 }
 
 export async function createPaste(
@@ -80,10 +80,10 @@ export async function createPaste(
   await ensureSchema();
 
   const id = randomUUID();
-  const ttl = options?.ttlHours || DEFAULT_TTL_HOURS;
+  const ttl = options?.ttlMinutes || DEFAULT_TTL_MINUTES;
 
   await pool.query(
-    `INSERT INTO pastes (id, content, expires_at) VALUES ($1, $2, now() + ($3::int || ' hours')::interval)`,
+    `INSERT INTO pastes (id, content, expires_at) VALUES ($1, $2, now() + ($3::int || ' minutes')::interval)`,
     [id, content, ttl]
   );
 
