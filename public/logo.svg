@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440" width="440" height="440">
+  <rect width="440" height="440" rx="48" fill="#0a0a0a"/>
+  <!-- 4x4 grid, cell=90, gap=10, total=90*4+10*3=390, offset=(440-390)/2=25 -->
+  <!-- Row 0: ■ ■ ■ □ -->
+  <rect x="25"  y="25"  width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="125" y="25"  width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="225" y="25"  width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="325" y="25"  width="90" height="90" rx="8" fill="#2d2d2d"/>
+  <!-- Row 1: ■ □ □ ■ -->
+  <rect x="25"  y="125" width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="125" y="125" width="90" height="90" rx="8" fill="#2d2d2d"/>
+  <rect x="225" y="125" width="90" height="90" rx="8" fill="#2d2d2d"/>
+  <rect x="325" y="125" width="90" height="90" rx="8" fill="#ededed"/>
+  <!-- Row 2: ■ ■ ■ □ -->
+  <rect x="25"  y="225" width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="125" y="225" width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="225" y="225" width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="325" y="225" width="90" height="90" rx="8" fill="#2d2d2d"/>
+  <!-- Row 3: ■ □ □ □ -->
+  <rect x="25"  y="325" width="90" height="90" rx="8" fill="#ededed"/>
+  <rect x="125" y="325" width="90" height="90" rx="8" fill="#2d2d2d"/>
+  <rect x="225" y="325" width="90" height="90" rx="8" fill="#2d2d2d"/>
+  <rect x="325" y="325" width="90" height="90" rx="8" fill="#2d2d2d"/>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="4" fill="#0a0a0a"/>
+  <!-- 4x4 grid, cell=6, gap=2, total=6*4+2*3=30, offset=(32-30)/2=1 -->
+  <!-- Row 0: ■ ■ ■ □ -->
+  <rect x="1"  y="1"  width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="9"  y="1"  width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="17" y="1"  width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="25" y="1"  width="6" height="6" rx="1" fill="#2d2d2d"/>
+  <!-- Row 1: ■ □ □ ■ -->
+  <rect x="1"  y="9"  width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="9"  y="9"  width="6" height="6" rx="1" fill="#2d2d2d"/>
+  <rect x="17" y="9"  width="6" height="6" rx="1" fill="#2d2d2d"/>
+  <rect x="25" y="9"  width="6" height="6" rx="1" fill="#ededed"/>
+  <!-- Row 2: ■ ■ ■ □ -->
+  <rect x="1"  y="17" width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="9"  y="17" width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="17" y="17" width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="25" y="17" width="6" height="6" rx="1" fill="#2d2d2d"/>
+  <!-- Row 3: ■ □ □ □ -->
+  <rect x="1"  y="25" width="6" height="6" rx="1" fill="#ededed"/>
+  <rect x="9"  y="25" width="6" height="6" rx="1" fill="#2d2d2d"/>
+  <rect x="17" y="25" width="6" height="6" rx="1" fill="#2d2d2d"/>
+  <rect x="25" y="25" width="6" height="6" rx="1" fill="#2d2d2d"/>
+</svg>
