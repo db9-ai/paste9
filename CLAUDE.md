@@ -26,7 +26,7 @@ GET /p/{token}?q=query     → decodeToken() → db9 SQL vec_embed_cosine_distan
 
 ### Semantic Search
 
-Long pastes (>500 chars) are automatically chunked via langchain `RecursiveCharacterTextSplitter` and indexed using db9's built-in `embedding` extension. Each chunk is stored in a `chunks` table within the paste's own anonymous database. `?q=` uses `vec_embed_cosine_distance()` to return relevant sections. If embedding setup fails, paste creation still succeeds and `?q=` falls back to the full document.
+Long pastes (>100 chars) are automatically chunked via langchain `RecursiveCharacterTextSplitter` and indexed using db9's built-in `embedding` extension. Each chunk is stored in a `chunks` table within the paste's own anonymous database. `?q=` uses `vec_embed_cosine_distance()` to return relevant sections. If embedding setup fails, paste creation still succeeds and `?q=` falls back to the full document.
 
 **One paste = one anonymous db9 instance.** The token in the URL is `dbId:password` base64url-encoded. The password is needed for the SDK client to authenticate, but `readPaste()` currently only uses the dbId (the shared SDK client has its own auth).
 

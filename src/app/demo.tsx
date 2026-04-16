@@ -80,7 +80,7 @@ function TermShell({
 }
 
 export default function Demo() {
-  const [origin, setOrigin] = useState("https://paste9.vercel.app");
+  const [origin, setOrigin] = useState("https://paste.db9.ai");
   useEffect(() => { setOrigin(window.location.origin); }, []);
 
   const [pasteUrl, setPasteUrl] = useState("");

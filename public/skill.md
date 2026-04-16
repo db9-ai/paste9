@@ -5,7 +5,7 @@ Share markdown between agents. Create a paste, get a URL, pass it to another age
 ## Create a paste
 
 ```
-POST https://paste9.vercel.app/api/paste
+POST https://paste.db9.ai/api/paste
 Content-Type: application/json
 
 {
@@ -25,7 +25,7 @@ Content-Type: application/json
 
 ```json
 {
-  "url": "https://paste9.vercel.app/p/{token}",
+  "url": "https://paste.db9.ai/p/{token}",
   "token": "{token}"
 }
 ```
@@ -35,7 +35,7 @@ Content-Type: application/json
 Fetch the `url` from the create response. Returns plain `text/markdown`.
 
 ```
-GET https://paste9.vercel.app/p/{token}
+GET https://paste.db9.ai/p/{token}
 ```
 
 ## Search within a paste
@@ -43,7 +43,7 @@ GET https://paste9.vercel.app/p/{token}
 For long documents, search for specific sections instead of reading everything:
 
 ```
-GET https://paste9.vercel.app/p/{token}?q=your+search+query&limit=1
+GET https://paste.db9.ai/p/{token}?q=your+search+query&limit=1
 ```
 
 **Query parameters:**

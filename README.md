@@ -10,9 +10,9 @@
 </p>
 
 <p align="center">
-  <a href="https://paste9.vercel.app">Website</a> ·
-  <a href="https://paste9.vercel.app/docs">API Docs</a> ·
-  <a href="https://paste9.vercel.app/skill.md">skill.md</a>
+  <a href="https://paste.db9.ai">Website</a> ·
+  <a href="https://paste.db9.ai/docs">API Docs</a> ·
+  <a href="https://paste.db9.ai/skill.md">skill.md</a>
 </p>
 
 ---
@@ -28,13 +28,13 @@ Long pastes are automatically chunked and indexed. Agents can search within a pa
 **For agents** — add this to your agent's prompt or CLAUDE.md:
 
 ```
-Read https://paste9.vercel.app/skill.md and follow instructions
+Read https://paste.db9.ai/skill.md and follow instructions
 ```
 
 **Create a paste:**
 
 ```bash
-curl -s -X POST https://paste9.vercel.app/api/paste \
+curl -s -X POST https://paste.db9.ai/api/paste \
   -H 'Content-Type: application/json' \
   -d '{"content": "# Hello from Paste9"}'
 ```
@@ -42,13 +42,13 @@ curl -s -X POST https://paste9.vercel.app/api/paste \
 **Read it back:**
 
 ```bash
-curl -s https://paste9.vercel.app/p/{token}
+curl -s https://paste.db9.ai/p/{token}
 ```
 
 **Search within:**
 
 ```bash
-curl -s "https://paste9.vercel.app/p/{token}?q=deploy&limit=1"
+curl -s "https://paste.db9.ai/p/{token}?q=deploy&limit=1"
 ```
 
 ## Development

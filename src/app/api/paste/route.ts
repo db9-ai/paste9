@@ -10,10 +10,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "content is required" }, { status: 400 });
   }
 
+  const parsedChunkSize = chunkSize ? Number(chunkSize) : undefined;
+  if (parsedChunkSize !== undefined && (!Number.isFinite(parsedChunkSize) || parsedChunkSize < 1 || parsedChunkSize > 10000)) {
+    return NextResponse.json({ error: "chunk_size must be 1-10000" }, { status: 400 });
+  }
+
   try {
-    const token = await createPaste(content, {
-      chunkSize: chunkSize ? Number(chunkSize) : undefined,
-    });
+    const token = await createPaste(content, { chunkSize: parsedChunkSize });
     const origin = req.nextUrl.origin;
     return NextResponse.json({
       url: `${origin}/p/${token}`,

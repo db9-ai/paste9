@@ -9,10 +9,11 @@ export async function GET(
 ) {
   const { token } = await params;
   const query = req.nextUrl.searchParams.get("q") || undefined;
-  const limit = req.nextUrl.searchParams.get("limit");
+  const limitRaw = req.nextUrl.searchParams.get("limit");
+  const parsedLimit = limitRaw ? Math.min(Math.max(Math.floor(Number(limitRaw)), 1), 100) : undefined;
   const content = await readPaste(token, {
     query,
-    limit: limit ? Number(limit) : undefined,
+    limit: Number.isFinite(parsedLimit) ? parsedLimit : undefined,
   });
   if (!content) {
     return new Response("Not found", { status: 404 });

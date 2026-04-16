@@ -33,7 +33,7 @@ export default function Docs() {
       <main className="flex-1 py-12 space-y-8 min-w-0">
         <div>
           <h1 className="text-2xl font-bold">API</h1>
-          <p className="mt-2 text-sm text-[#555]">No auth required. Base URL: <code className="text-[#a0a0a0]">https://paste9.vercel.app</code></p>
+          <p className="mt-2 text-sm text-[#555]">No auth required. Base URL: <code className="text-[#a0a0a0]">https://paste.db9.ai</code></p>
         </div>
 
         {/* POST */}
@@ -48,10 +48,10 @@ export default function Docs() {
               <tr className="border-t border-[#1a1a1a]"><td className="py-1.5 pr-4 text-[#ededed]">chunk_size</td><td className="py-1.5 pr-4 text-[#7dd3fc]">number</td><td className="py-1.5">Chars per chunk. Default: 200</td></tr>
             </tbody>
           </table>
-          <Code code={`curl -s -X POST https://paste9.vercel.app/api/paste -H 'Content-Type: application/json' -d '{"content": "# Hello", "chunk_size": 200}'`}>
-            <span className="text-[#22c55e]">$ </span><span className="text-[#ededed]">{`curl -s -X POST https://paste9.vercel.app/api/paste \\
+          <Code code={`curl -s -X POST https://paste.db9.ai/api/paste -H 'Content-Type: application/json' -d '{"content": "# Hello", "chunk_size": 200}'`}>
+            <span className="text-[#22c55e]">$ </span><span className="text-[#ededed]">{`curl -s -X POST https://paste.db9.ai/api/paste \\
   -H 'Content-Type: application/json' \\
-  -d '{"content": "# Hello", "chunk_size": 200}'`}</span>{"\n\n"}<span className="text-[#a0a0a0]">{`{"url":"https://paste9.vercel.app/p/x7kQ...","token":"x7kQ..."}`}</span>
+  -d '{"content": "# Hello", "chunk_size": 200}'`}</span>{"\n\n"}<span className="text-[#a0a0a0]">{`{"url":"https://paste.db9.ai/p/x7kQ...","token":"x7kQ..."}`}</span>
           </Code>
         </div>
 
@@ -62,8 +62,8 @@ export default function Docs() {
             <code className="text-sm font-mono text-[#a0a0a0]">{`/p/{token}`}</code>
           </div>
           <p className="text-sm text-[#a0a0a0]">Returns full markdown.</p>
-          <Code code={`curl -s https://paste9.vercel.app/p/{token}`}>
-            <span className="text-[#22c55e]">$ </span><span className="text-[#ededed]">{`curl -s https://paste9.vercel.app/p/{token}`}</span>
+          <Code code={`curl -s https://paste.db9.ai/p/{token}`}>
+            <span className="text-[#22c55e]">$ </span><span className="text-[#ededed]">{`curl -s https://paste.db9.ai/p/{token}`}</span>
           </Code>
         </div>
 
@@ -79,8 +79,8 @@ export default function Docs() {
               <tr className="border-t border-[#1a1a1a]"><td className="py-1.5 pr-4 text-[#ededed]">limit</td><td className="py-1.5 pr-4 text-[#7dd3fc]">number</td><td className="py-1.5">Max results. Default: 3</td></tr>
             </tbody>
           </table>
-          <Code code={`curl -s "https://paste9.vercel.app/p/{token}?q=deploy&limit=1"`}>
-            <span className="text-[#22c55e]">$ </span><span className="text-[#ededed]">{`curl -s "https://paste9.vercel.app/p/{token}?q=deploy&limit=1"`}</span>{"\n\n"}<span className="text-[#7dd3fc]">## Deploy{"\n"}Use Vercel preview for staging.</span>
+          <Code code={`curl -s "https://paste.db9.ai/p/{token}?q=deploy&limit=1"`}>
+            <span className="text-[#22c55e]">$ </span><span className="text-[#ededed]">{`curl -s "https://paste.db9.ai/p/{token}?q=deploy&limit=1"`}</span>{"\n\n"}<span className="text-[#7dd3fc]">## Deploy{"\n"}Use Vercel preview for staging.</span>
           </Code>
         </div>
 
