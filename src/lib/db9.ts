@@ -1,7 +1,9 @@
 import { createDb9Client } from "get-db9";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
-const client = createDb9Client();
+const client = createDb9Client(
+  process.env.DB9_TOKEN ? { token: process.env.DB9_TOKEN } : {}
+);
 
 const DEFAULT_CHUNK_SIZE = 200;
 const DEFAULT_CHUNK_OVERLAP = 20;
