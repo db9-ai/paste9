@@ -40,17 +40,7 @@ async function ensureSchema() {
       vec VECTOR
     )
   `);
-  // pg_cron: cleanup expired pastes every hour
-  try {
-    await pool.query(`CREATE EXTENSION IF NOT EXISTS pg_cron`);
-    await pool.query(`
-      SELECT cron.schedule('paste9_cleanup', '0 * * * *',
-        $$DELETE FROM pastes WHERE expires_at < now()$$
-      )
-    `);
-  } catch {
-    // pg_cron might already be scheduled or not available
-  }
+  // Cleanup handled by maybeCleanup() on each read (1% probability)
   schemaReady = true;
 }
 
@@ -66,6 +56,14 @@ async function chunkContent(
   });
   const docs = await splitter.createDocuments([content]);
   return docs.map((d) => d.pageContent);
+}
+
+// --- Lazy cleanup (1% chance per read) ---
+
+function maybeCleanup() {
+  if (Math.random() < 0.01) {
+    pool.query(`DELETE FROM pastes WHERE expires_at < now()`).catch(() => {});
+  }
 }
 
 // --- Public API ---
@@ -125,6 +123,7 @@ export async function readPaste(
 ): Promise<string | null> {
   try {
     await ensureSchema();
+    maybeCleanup();
 
     if (options?.query) {
       const limit = options.limit || DEFAULT_SEARCH_LIMIT;
