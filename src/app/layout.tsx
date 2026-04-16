@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Paste9",
   description: "Ephemeral pastebin. No accounts. No history. It just disappears.",
-  icons: { icon: "/favicon.png" },
 };
 
 export default function RootLayout({
