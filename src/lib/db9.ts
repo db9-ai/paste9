@@ -1,148 +1,117 @@
-import { createDb9Client } from "get-db9";
+import pg from "pg";
+import { randomUUID } from "crypto";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
-const client = createDb9Client(
-  process.env.DB9_TOKEN ? { token: process.env.DB9_TOKEN } : {}
-);
-
 const DEFAULT_CHUNK_SIZE = 200;
-const DEFAULT_CHUNK_OVERLAP = 20;
-const DEFAULT_SEARCH_LIMIT = 3;
 const SEARCH_THRESHOLD = 100;
+const DEFAULT_SEARCH_LIMIT = 3;
+const DEFAULT_TTL_HOURS = 24 * 7; // 7 days
 
-export interface PasteToken {
-  dbId: string;
-  password: string;
-}
-
-export function encodeToken(dbId: string, password: string): string {
-  return Buffer.from(`${dbId}:${password}`).toString("base64url");
-}
-
-export function decodeToken(token: string): PasteToken {
-  const decoded = Buffer.from(token, "base64url").toString();
-  const idx = decoded.indexOf(":");
-  if (idx === -1) throw new Error("Invalid token");
-  return {
-    dbId: decoded.slice(0, idx),
-    password: decoded.slice(idx + 1),
-  };
-}
-
-// --- Chunking ---
-
-async function chunkMarkdown(
-  content: string,
-  chunkSize = DEFAULT_CHUNK_SIZE
-): Promise<string[]> {
-  const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize,
-    chunkOverlap: Math.min(DEFAULT_CHUNK_OVERLAP, Math.floor(chunkSize / 5)),
-  });
-  const docs = await splitter.createDocuments([content]);
-  return docs.map((d) => d.pageContent);
-}
-
-// --- Search schema + indexing ---
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL?.replace(/[?&]sslmode=[^&]*/g, ""),
+  ssl: false,
+});
 
 function escapeSQL(str: string): string {
   return str.replace(/\\/g, "\\\\").replace(/'/g, "''");
 }
 
-async function initSearch(
-  dbId: string,
-  chunks: string[]
-): Promise<boolean> {
+// --- Schema init (runs once) ---
+
+let schemaReady = false;
+
+async function ensureSchema() {
+  if (schemaReady) return;
+  await pool.query(`CREATE EXTENSION IF NOT EXISTS embedding`);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS pastes (
+      id TEXT PRIMARY KEY,
+      content TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      expires_at TIMESTAMPTZ NOT NULL
+    )
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS chunks (
+      id SERIAL PRIMARY KEY,
+      paste_id TEXT NOT NULL REFERENCES pastes(id) ON DELETE CASCADE,
+      idx INTEGER NOT NULL,
+      body TEXT NOT NULL,
+      vec VECTOR
+    )
+  `);
+  // pg_cron: cleanup expired pastes every hour
   try {
-    await client.databases.sql(dbId, `SET standard_conforming_strings = on;`);
-    await client.databases.sql(dbId, `CREATE EXTENSION IF NOT EXISTS embedding;`);
-    await client.databases.sql(
-      dbId,
-      `CREATE TABLE IF NOT EXISTS chunks (
-        id SERIAL PRIMARY KEY,
-        idx INTEGER NOT NULL,
-        body TEXT NOT NULL,
-        vec VECTOR
-      );`
-    );
-
-    // Batch insert all chunks in one SQL call
-    const values = chunks
-      .map((chunk, i) => {
-        const escaped = escapeSQL(chunk);
-        return `(${i}, '${escaped}', embedding('${escaped}'))`;
-      })
-      .join(", ");
-    await client.databases.sql(
-      dbId,
-      `INSERT INTO chunks (idx, body, vec) VALUES ${values};`
-    );
-
-    return true;
+    await pool.query(`CREATE EXTENSION IF NOT EXISTS pg_cron`);
+    await pool.query(`
+      SELECT cron.schedule('paste9_cleanup', '0 * * * *',
+        $$DELETE FROM pastes WHERE expires_at < now()$$
+      )
+    `);
   } catch {
-    return false;
+    // pg_cron might already be scheduled or not available
   }
+  schemaReady = true;
 }
 
-// --- Search query ---
+// --- Chunking ---
 
-async function searchChunks(
-  dbId: string,
-  query: string,
-  limit = DEFAULT_SEARCH_LIMIT
-): Promise<string | null> {
-  try {
-    const result = await client.databases.sql(
-      dbId,
-      `SELECT idx, body FROM chunks
-       ORDER BY vec <=> embedding('${escapeSQL(query)}')
-       LIMIT ${limit};`
-    );
-    if (!result.rows || result.rows.length === 0) return null;
-
-    const sorted = [...result.rows].sort(
-      (a: unknown[], b: unknown[]) => (a[0] as number) - (b[0] as number)
-    );
-    return sorted.map((row: unknown[]) => row[1] as string).join("\n\n");
-  } catch {
-    return null;
-  }
+async function chunkContent(
+  content: string,
+  chunkSize = DEFAULT_CHUNK_SIZE
+): Promise<string[]> {
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize,
+    chunkOverlap: Math.min(20, Math.floor(chunkSize / 5)),
+  });
+  const docs = await splitter.createDocuments([content]);
+  return docs.map((d) => d.pageContent);
 }
 
 // --- Public API ---
 
 export interface CreatePasteOptions {
   chunkSize?: number;
+  ttlHours?: number;
 }
 
 export async function createPaste(
   content: string,
   options?: CreatePasteOptions
 ): Promise<string> {
-  const name = `p9-${Date.now().toString(36)}`;
-  const db = await client.databases.create({ name });
-  const creds = await client.databases.credentials(db.id);
-  const password = creds.admin_password;
+  await ensureSchema();
 
-  await client.fs.write(db.id, "/paste.md", content);
+  const id = randomUUID();
+  const ttl = options?.ttlHours || DEFAULT_TTL_HOURS;
 
-  let searchEnabled = false;
+  await pool.query(
+    `INSERT INTO pastes (id, content, expires_at) VALUES ($1, $2, now() + ($3::int || ' hours')::interval)`,
+    [id, content, ttl]
+  );
+
+  // Index chunks for search
   if (content.length > SEARCH_THRESHOLD) {
     try {
-      const chunks = await chunkMarkdown(content, options?.chunkSize);
-      searchEnabled = await initSearch(db.id, chunks);
+      const chunks = await chunkContent(content, options?.chunkSize);
+      if (chunks.length > 0) {
+        const values = chunks
+          .map((_, i) => `($1, $${i * 2 + 2}, $${i * 2 + 3}, embedding($${i * 2 + 3}))`)
+          .join(", ");
+        const params: (string | number)[] = [id];
+        chunks.forEach((chunk, i) => {
+          params.push(i, chunk);
+        });
+        await pool.query(
+          `INSERT INTO chunks (paste_id, idx, body, vec) VALUES ${values}`,
+          params
+        );
+      }
     } catch {
-      // search setup failed, paste still works without it
+      // search indexing failed, paste still works
     }
   }
 
-  await client.fs.write(
-    db.id,
-    "/paste.meta.json",
-    JSON.stringify({ searchEnabled })
-  );
-
-  return encodeToken(db.id, password);
+  return id;
 }
 
 export interface ReadPasteOptions {
@@ -151,26 +120,33 @@ export interface ReadPasteOptions {
 }
 
 export async function readPaste(
-  token: string,
+  id: string,
   options?: ReadPasteOptions
 ): Promise<string | null> {
   try {
-    const { dbId } = decodeToken(token);
+    await ensureSchema();
 
     if (options?.query) {
-      try {
-        const metaRaw = await client.fs.read(dbId, "/paste.meta.json");
-        const meta = JSON.parse(metaRaw);
-        if (meta.searchEnabled) {
-          const result = await searchChunks(dbId, options.query, options.limit);
-          if (result) return result;
-        }
-      } catch {
-        // fall through to full document
+      const limit = options.limit || DEFAULT_SEARCH_LIMIT;
+      const result = await pool.query(
+        `SELECT idx, body FROM chunks
+         WHERE paste_id = $1
+         ORDER BY vec <=> embedding($2)
+         LIMIT $3`,
+        [id, options.query, limit]
+      );
+      if (result.rows.length > 0) {
+        const sorted = [...result.rows].sort((a, b) => a.idx - b.idx);
+        return sorted.map((r) => r.body).join("\n\n");
       }
     }
 
-    return await client.fs.read(dbId, "/paste.md");
+    const result = await pool.query(
+      `SELECT content FROM pastes WHERE id = $1 AND expires_at > now()`,
+      [id]
+    );
+    if (result.rows.length === 0) return null;
+    return result.rows[0].content;
   } catch {
     return null;
   }

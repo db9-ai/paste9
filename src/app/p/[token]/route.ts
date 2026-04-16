@@ -7,11 +7,12 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Params }
 ) {
-  const { token } = await params;
+  const { token: id } = await params;
   const query = req.nextUrl.searchParams.get("q") || undefined;
   const limitRaw = req.nextUrl.searchParams.get("limit");
   const parsedLimit = limitRaw ? Math.min(Math.max(Math.floor(Number(limitRaw)), 1), 100) : undefined;
-  const content = await readPaste(token, {
+
+  const content = await readPaste(id, {
     query,
     limit: Number.isFinite(parsedLimit) ? parsedLimit : undefined,
   });
