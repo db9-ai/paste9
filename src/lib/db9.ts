@@ -44,7 +44,7 @@ async function chunkMarkdown(
 // --- Search schema + indexing ---
 
 function escapeSQL(str: string): string {
-  return str.replace(/'/g, "''");
+  return str.replace(/\\/g, "\\\\").replace(/'/g, "''");
 }
 
 async function initSearch(
@@ -52,10 +52,8 @@ async function initSearch(
   chunks: string[]
 ): Promise<boolean> {
   try {
-    await client.databases.sql(
-      dbId,
-      `CREATE EXTENSION IF NOT EXISTS embedding;`
-    );
+    await client.databases.sql(dbId, `SET standard_conforming_strings = on;`);
+    await client.databases.sql(dbId, `CREATE EXTENSION IF NOT EXISTS embedding;`);
     await client.databases.sql(
       dbId,
       `CREATE TABLE IF NOT EXISTS chunks (
@@ -66,12 +64,17 @@ async function initSearch(
       );`
     );
 
-    for (let i = 0; i < chunks.length; i++) {
-      await client.databases.sql(
-        dbId,
-        `INSERT INTO chunks (idx, body, vec) VALUES (${i}, '${escapeSQL(chunks[i])}', embedding('${escapeSQL(chunks[i])}'));`
-      );
-    }
+    // Batch insert all chunks in one SQL call
+    const values = chunks
+      .map((chunk, i) => {
+        const escaped = escapeSQL(chunk);
+        return `(${i}, '${escaped}', embedding('${escaped}'))`;
+      })
+      .join(", ");
+    await client.databases.sql(
+      dbId,
+      `INSERT INTO chunks (idx, body, vec) VALUES ${values};`
+    );
 
     return true;
   } catch {

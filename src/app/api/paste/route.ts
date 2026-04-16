@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createPaste } from "@/lib/db9";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "invalid JSON" }, { status: 400 });
+  }
   const content = body?.content;
   const chunkSize = body?.chunk_size;
 
