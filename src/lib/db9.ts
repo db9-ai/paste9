@@ -141,7 +141,9 @@ export async function readPaste(
     }
 
     const result = await pool.query(
-      `SELECT content FROM pastes WHERE id = $1 AND expires_at > now()`,
+      `UPDATE pastes SET expires_at = now() + (${DEFAULT_TTL_MINUTES}::int || ' minutes')::interval
+       WHERE id = $1 AND expires_at > now()
+       RETURNING content`,
       [id]
     );
     if (result.rows.length === 0) return null;
