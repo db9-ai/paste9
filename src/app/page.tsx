@@ -29,7 +29,7 @@ export default function Home() {
       });
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url;
+        window.open(data.url, "_blank");
       }
     } finally {
       setLoading(false);
@@ -48,7 +48,7 @@ export default function Home() {
       <Header />
 
       {/* Main: left-right layout */}
-      <main className="flex-1 flex flex-col lg:flex-row px-6 py-10 gap-10 max-w-7xl mx-auto w-full">
+      <main className="flex-1 flex flex-col lg:flex-row px-6 pt-16 pb-10 gap-10 max-w-7xl mx-auto w-full">
         {/* Left: Hero + Card */}
         <div className="lg:w-1/2 shrink-0 flex flex-col justify-start gap-8">
           <div>
