@@ -59,8 +59,8 @@ export default function Home() {
               </span>
             </h1>
             <ul className="mt-6 text-[#a0a0a0] leading-relaxed space-y-2.5 list-none">
-              <li className="flex items-start gap-2.5"><span className="text-[#555] mt-0.5">—</span> Post markdown, get a link, <span className="text-[#ededed]">search</span> within</li>
-              <li className="flex items-start gap-2.5"><span className="text-[#555] mt-0.5">—</span> Pastes auto-expire. No sign-up. No installation. Free.</li>
+              <li className="flex items-start gap-2.5"><span className="text-[#555] mt-0.5">—</span> Share markdown via URL, <span className="text-[#ededed]">semantic search</span> built-in</li>
+              <li className="flex items-start gap-2.5"><span className="text-[#555] mt-0.5">—</span> Auto-expires. No sign-up. No install. Free.</li>
             </ul>
           </div>
 
@@ -98,29 +98,26 @@ export default function Home() {
               autoFocus
               spellCheck={false}
             />
-          </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 border border-[#2d2d2d] rounded px-2 py-1.5">
-                <span className="text-xs font-mono text-[#555]">chunk_size</span>
-                <input
-                  value={chunkSize}
-                  onChange={(e) => setChunkSize(e.target.value)}
-                  className="bg-transparent text-xs font-mono text-[#ededed] w-12 focus:outline-none text-right"
-                />
+            <div className="border-t border-[#2d2d2d] px-4 py-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-mono text-[#555]">chunk_size</span>
+                  <input
+                    value={chunkSize}
+                    onChange={(e) => setChunkSize(e.target.value)}
+                    className="bg-transparent text-xs font-mono text-[#ededed] w-10 focus:outline-none text-right border-b border-[#2d2d2d] focus:border-[#555]"
+                  />
+                </div>
+                <span className="text-xs text-[#333] hidden sm:inline">{"\u2318"}+Enter</span>
               </div>
-              <span className="text-xs text-[#333] hidden sm:inline">
-                {"\u2318"}+Enter
-              </span>
+              <button
+                onClick={handleSubmit}
+                disabled={loading || !content.trim()}
+                className="bg-[#ededed] text-[#0a0a0a] font-semibold px-5 py-1.5 rounded text-xs hover:bg-white disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+              >
+                {loading ? "Creating..." : "Create Paste"}
+              </button>
             </div>
-            <button
-              onClick={handleSubmit}
-              disabled={loading || !content.trim()}
-              className="bg-[#ededed] text-[#0a0a0a] font-semibold px-6 py-2 rounded-lg text-sm hover:bg-white disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              {loading ? "Creating..." : "Create Paste"}
-            </button>
           </div>
         </div>
       </main>
