@@ -145,7 +145,7 @@ export default function Demo() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Left: Create */}
           <div className="flex flex-col gap-3">
-            <div className="text-sm font-mono text-[#ededed]">Create</div>
+            <div className="text-sm font-mono text-[#ededed]">Agent A <span className="text-[#555]">—</span> Create</div>
             <TermShell
               title="terminal"
               onRun={handlePost}
@@ -163,7 +163,7 @@ export default function Demo() {
 
           {/* Right: Read + Search */}
           <div className="flex flex-col gap-3">
-            <div className="text-sm font-mono text-[#ededed]">Read</div>
+            <div className="text-sm font-mono text-[#ededed]">Agent B <span className="text-[#555]">—</span> Read</div>
             <TermShell
               title="terminal"
               onRun={handleRead}
@@ -178,7 +178,7 @@ export default function Demo() {
               </div>
             </TermShell>
 
-            <div className="text-sm font-mono"><span className="text-[#7dd3fc]">Semantic Search</span></div>
+            <div className="text-sm font-mono">Agent B <span className="text-[#555]">—</span> <span className="text-[#7dd3fc]">Semantic Search</span></div>
             <TermShell
               title="terminal"
               onRun={handleSearch}
